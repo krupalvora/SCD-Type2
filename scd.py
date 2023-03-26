@@ -12,31 +12,28 @@ source.execute("select `CUST_CODE`, `CUST_NAME`, `CUST_CITY`, `WORKING_AREA`, `C
 st=source.fetchall()
 conn.commit()
 ss=str(s).replace(",)","").replace("(","").replace("[","").replace("]","").replace(" ","")
-#print(type(st))
 
-#GET VALUES FORM TARGET
+
+#GET VALUES FORM TARGET WITH MATCHING BUSINESS KEYS
 conn = mysql.connector.connect(host='localhost', database='dds',user='sasdds', password='1234', port=3307)
 dds=conn.cursor()
-query=" select CUST_CODE from DDS_CUSTOMER where CUST_CODE in (" + ss +")"
+query=" select CUST_CODE from DDS_CUSTOMER where CUST_CODE in (" + ss +") AND VALID_TO_DTTM='5999-01-12 00:00:00'"
 dds.execute(query)
 d=dds.fetchall()
 query=" select `CUST_CODE`, `CUST_NAME`, `CUST_CITY`, `WORKING_AREA`, `CUST_COUNTRY`, `GRADE`, `OPENING_AMT`, `RECEIVE_AMT`, `PAYMENT_AMT`, `OUTSTANDING_AMT`, `PHONE_NO`, `AGENT_CODE` ,CUSTOMER_RK from DDS_CUSTOMER where CUST_CODE in (" + ss +") AND VALID_TO_DTTM='5999-01-12 00:00:00'"
 dds.execute(query)
 dt=dds.fetchall()
 conn.commit()
-#print(dt[0])
 
-print(len(s),len(d))
+#print(len(s) ,len(d) )
 
 # if difference between src and dds is zero then 
 if len(s) <= len(d)  :
     upd_keys=set(s).union(set(d))
     upd_keys=list(zip(*upd_keys))[0]
-    #print(upd_keys)
-    update=[]
-    insert=[]
     for i in range(len(d)): # iter for each present key
-        #print(upd_keys[i])
+        update=[]
+        insert=[]
         for j in range(len(dt)):
             if dt[j][0] == upd_keys[i]:
                 tmp1= dt[j]
@@ -67,8 +64,7 @@ if len(s) <= len(d)  :
             VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);'''
             insert_rec.execute(query,insert)
             conn.commit()
-
-
+# if values in src are greater than dds then insert missing ones. 
 elif len(s) > len(d)  :
     ins_keys=list(set(s)-set(d))
     ins_keys=list(zip(*ins_keys))[0]
@@ -77,7 +73,6 @@ elif len(s) > len(d)  :
     for i in range(len(st)):
         if st[i][0] in ins_keys:
             insert.append(st[i] + ('5999-01-12',str(datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S')),))
-
     # Insert statement
     conn = mysql.connector.connect(host='localhost', database='dds',user='sasdds', password='1234', port=3307)
     insert_rec=conn.cursor(prepared=True)
