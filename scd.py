@@ -48,7 +48,7 @@ if len(s) <= len(d)  :
         if h1==h2:
             pass
         else :
-            print(h1,h2,upd_keys[i],dt[i])
+            print(h1,h2,upd_keys[i])
             #update.append(dt[i] + (str(datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S')),))
             #insert.append(st[i] + ('5999-01-12',str(datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S')),))
             update=(str(datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S')),) + (upd_keys[i],)
@@ -58,15 +58,15 @@ if len(s) <= len(d)  :
             upd_rec.execute(query,update)
             conn.commit()
             
-            insert=st[i] + ('5999-01-12',str(datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S')),) + (dt[i][len(dt[i])-1],)
+            insert=tmp2 + ('5999-01-12',str(datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S')),) + (tmp1[len(tmp1)-1],)
             print(insert)
-            # conn = mysql.connector.connect(host='localhost', database='dds',user='sasdds', password='1234', port=3307)
-            # insert_rec=conn.cursor(prepared=True)
-            # query='''INSERT INTO `dds_customer` (`CUST_CODE`, `CUST_NAME`, `CUST_CITY`, `WORKING_AREA`, `CUST_COUNTRY`, `GRADE`, `OPENING_AMT`, `RECEIVE_AMT`
-            #  , `PAYMENT_AMT`, `OUTSTANDING_AMT`, `PHONE_NO`, `AGENT_CODE`, `VALID_TO_DTTM`, `VALID_FROM_DTTM`, CUSTOMER_RK) 
-            # VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);'''
-            # insert_rec.execute(query,insert)
-            # conn.commit()
+            conn = mysql.connector.connect(host='localhost', database='dds',user='sasdds', password='1234', port=3307)
+            insert_rec=conn.cursor(prepared=True)
+            query='''INSERT INTO `dds_customer` (`CUST_CODE`, `CUST_NAME`, `CUST_CITY`, `WORKING_AREA`, `CUST_COUNTRY`, `GRADE`, `OPENING_AMT`, `RECEIVE_AMT`
+             , `PAYMENT_AMT`, `OUTSTANDING_AMT`, `PHONE_NO`, `AGENT_CODE`, `VALID_TO_DTTM`, `VALID_FROM_DTTM`, CUSTOMER_RK) 
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);'''
+            insert_rec.execute(query,insert)
+            conn.commit()
 
 
 elif len(s) > len(d)  :
